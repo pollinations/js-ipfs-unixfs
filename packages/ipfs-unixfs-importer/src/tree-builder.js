@@ -84,13 +84,7 @@ async function * flushAndYield (tree, blockstore) {
  */
 async function * treeBuilder (source, block, options) {
   /** @type {Dir} */
-  let tree = options?.tree || new DirFlat({
-    root: true,
-    dir: true,
-    path: '',
-    dirty: true,
-    flat: true
-  }, options)
+  let tree = options?.tree || emptyTree(options)
 
   for await (const entry of source) {
     if (!entry) {
@@ -117,4 +111,17 @@ async function * treeBuilder (source, block, options) {
   }
 }
 
+
+
 export default treeBuilder
+
+export function emptyTree(options) {
+  return new DirFlat({
+    root: true,
+    dir: true,
+    path: '',
+    dirty: true,
+    flat: true
+  }, options)
+}
+
