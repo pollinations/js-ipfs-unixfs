@@ -33,6 +33,7 @@
     "release": "lerna exec --concurrency 1 -- semantic-release -e semantic-release-monorepo"
   },
   "dependencies": {
+    "ipfs-unixfs-importer": "^10.0.3",
     "lerna": "^6.0.1"
   },
   "workspaces": [
