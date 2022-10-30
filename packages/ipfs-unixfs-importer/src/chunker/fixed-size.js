@@ -1,31 +1,32 @@
-import { Uint8ArrayList } from 'uint8arraylist'
+// @ts-ignore
+import BufferList from 'bl/BufferList.js'
 
 /**
  * @type {import('../types').Chunker}
  */
 async function * fixedSizeChunker (source, options) {
-  let list = new Uint8ArrayList()
+  let bl = new BufferList()
   let currentLength = 0
   let emitted = false
   const maxChunkSize = options.maxChunkSize
 
   for await (const buffer of source) {
-    list.append(buffer)
+    bl.append(buffer)
 
     currentLength += buffer.length
 
     while (currentLength >= maxChunkSize) {
-      yield list.slice(0, maxChunkSize)
+      yield bl.slice(0, maxChunkSize)
       emitted = true
 
       // throw away consumed bytes
-      if (maxChunkSize === list.length) {
-        list = new Uint8ArrayList()
+      if (maxChunkSize === bl.length) {
+        bl = new BufferList()
         currentLength = 0
       } else {
-        const newBl = new Uint8ArrayList()
-        newBl.append(list.sublist(maxChunkSize))
-        list = newBl
+        const newBl = new BufferList()
+        newBl.append(bl.shallowSlice(maxChunkSize))
+        bl = newBl
 
         // update our offset
         currentLength -= maxChunkSize
@@ -35,7 +36,7 @@ async function * fixedSizeChunker (source, options) {
 
   if (!emitted || currentLength) {
     // return any remaining bytes or an empty buffer
-    yield list.subarray(0, currentLength)
+    yield bl.slice(0, currentLength)
   }
 }
 

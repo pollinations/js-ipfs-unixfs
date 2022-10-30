@@ -1,6 +1,6 @@
 {
   "name": "ipfs-unixfs",
-  "version": "8.0.0",
+  "version": "7.0.0",
   "description": "JavaScript implementation of IPFS' unixfs (a Unix FileSystem representation on top of a MerkleDAG)",
   "license": "Apache-2.0 OR MIT",
   "homepage": "https://github.com/ipfs/js-ipfs-unixfs/tree/master/packages/ipfs-unixfs#readme",
@@ -163,7 +163,7 @@
   "devDependencies": {
     "aegir": "^37.5.0",
     "protobufjs-cli": "^1.0.0",
-    "uint8arrays": "^4.0.2"
+    "uint8arrays": "^3.0.0"
   },
   "browser": {
     "fs": false
