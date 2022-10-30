@@ -1,6 +1,6 @@
 import parallelBatch from 'it-parallel-batch'
-import dagBuilderFn from './dag-builder/index.js'
 import defaultOptions from './options.js'
+import dagBuilderFn from './dag-builder/index.js'
 import treeBuilderFn from './tree-builder.js'
 
 /**
@@ -57,7 +57,12 @@ export async function * importer (source, blockstore, options = {}) {
     candidates = [source]
   }
 
-  for await (const [entry,tree] of treeBuilder(parallelBatch(dagBuilder(candidates, blockstore, opts), opts.fileImportConcurrency), blockstore, opts)) {
-    yield {...entry, tree }
+  for await (const entry of treeBuilder(parallelBatch(dagBuilder(candidates, blockstore, opts), opts.fileImportConcurrency), blockstore, opts)) {
+    yield {
+      cid: entry.cid,
+      path: entry.path,
+      unixfs: entry.unixfs,
+      size: entry.size
+    }
   }
 }

@@ -1,6 +1,6 @@
 import DirFlat from './dir-flat.js'
-import Dir from './dir.js'
 import flatToShard from './flat-to-shard.js'
+import Dir from './dir.js'
 import toPathComponents from './utils/to-path-components.js'
 
 /**
@@ -74,9 +74,7 @@ async function * flushAndYield (tree, blockstore) {
     return
   }
 
-  for await (const item of tree.flush(blockstore)) {
-    yield [item,tree]
-  }
+  yield * tree.flush(blockstore)
 }
 
 /**
@@ -84,7 +82,13 @@ async function * flushAndYield (tree, blockstore) {
  */
 async function * treeBuilder (source, block, options) {
   /** @type {Dir} */
-  let tree = options?.tree || emptyTree(options)
+  let tree = new DirFlat({
+    root: true,
+    dir: true,
+    path: '',
+    dirty: true,
+    flat: true
+  }, options)
 
   for await (const entry of source) {
     if (!entry) {
@@ -94,7 +98,7 @@ async function * treeBuilder (source, block, options) {
     tree = await addToTree(entry, tree, options)
 
     if (!entry.unixfs || !entry.unixfs.isDirectory()) {
-      yield [entry, tree]
+      yield entry
     }
   }
 
@@ -111,17 +115,4 @@ async function * treeBuilder (source, block, options) {
   }
 }
 
-
-
 export default treeBuilder
-
-export function emptyTree(options) {
-  return new DirFlat({
-    root: true,
-    dir: true,
-    path: '',
-    dirty: true,
-    flat: true
-  }, options)
-}
-
